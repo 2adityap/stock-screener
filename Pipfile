@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 Flask = "*"
 Flask-SocketIO = "*"
+websocket = "*"
 
 [requires]
 python_version = "3.7"
