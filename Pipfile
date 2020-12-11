@@ -9,6 +9,12 @@ verify_ssl = true
 Flask = "*"
 Flask-SocketIO = "*"
 websocket = "*"
+pandas = "*"
+numpy = "*"
+requests = "*"
+tweepy = "*"
+nltk = "*"
+scikit-learn = "*"
 
 [requires]
 python_version = "3.7"

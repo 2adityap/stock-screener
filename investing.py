@@ -69,13 +69,13 @@ def analyze_earnings(earnings):
     bool_revenue = analyze_earnings_helper(quarter_revenue)
     bool_profit = analyze_earnings_helper(quarter_profit)
     if(bool_profit and bool_revenue):
-        print("Both earnings and revenue have increased over the last 4 quarters")
+        return "Both earnings and revenue have increased over the last 4 quarters"
     if(not(bool_revenue) and bool_profit):
-       print("Profits have gone up over the last 4 quarters, but the revenue hasn't")
+       return "Profits have gone up over the last 4 quarters, but the revenue hasn't"
     if(not(bool_profit) and bool_revenue):
-        print("Revenue has gone up over the last 4 quarters, but profit hasn't")
+        return "Revenue has gone up over the last 4 quarters, but profit hasn't"
     else:
-        print("Neither earnings or revenue have increased over the last 4 quarters")
+        return "Neither earnings or revenue have increased over the last 4 quarters"
 
 def analyze_earnings_helper(quarter):
     if(quarter[0] > quarter[1] > quarter[2] > quarter[3]):
@@ -88,14 +88,14 @@ def main():
     key = "1AJHCKC421EAJDT9"
     symbol = input("What symbol do you want? ")
     year_high, year_low, fifty_moving_avg, two_hundy_moving_avg = get_high_and_averages(key, symbol)
-    #print("52 Week High: {0}".format(year_high))
-    #print("52 Week Low: {0}".format(year_low))
-    #print("50 Day Moving Average: {0}".format(fifty_moving_avg))
-    #print("200 Day Moving Average: {0}".format(two_hundy_moving_avg))
-    #earnings = get_earnings(key, symbol)
+    print("52 Week High: {0}".format(year_high))
+    print("52 Week Low: {0}".format(year_low))
+    print("50 Day Moving Average: {0}".format(fifty_moving_avg))
+    print("200 Day Moving Average: {0}".format(two_hundy_moving_avg))
+    earnings = get_earnings(key, symbol)
     #print(earnings)
-    #analyze_earnings(earnings)
-    current_price(key,symbol)
+    print(analyze_earnings(earnings))
+    #current_price(key,symbol)
 
 if __name__ == "__main__":
     main()
