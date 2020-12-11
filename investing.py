@@ -1,5 +1,5 @@
 import requests
-
+import os
 
 url = "https://www.alphavantage.co/query?"
 
@@ -84,8 +84,11 @@ def analyze_earnings_helper(quarter):
         return False
 
 
+
+
 def main():
-    key = "1AJHCKC421EAJDT9"
+    key = os.environ.get("ALPHA_API_KEY")
+    print(key)
     symbol = input("What symbol do you want? ")
     year_high, year_low, fifty_moving_avg, two_hundy_moving_avg = get_high_and_averages(key, symbol)
     print("52 Week High: {0}".format(year_high))
