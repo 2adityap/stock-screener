@@ -1,6 +1,9 @@
 import tweepy
 import nltk
+import numpy as np
+import pandas as pd
 import os
+import re
 
 
 #check if there is a relationship between sentiment and stock price, then develop formula using gradient descent?
@@ -31,38 +34,38 @@ except:
 
 def pull_tweets(query, count):
     tweet_texts = []
+    sentiment_list = []
+    neutral_count = 0
     try:
-        tweets = tweepy.Cursor(api.search,q=query).items(count)
+        tweets = tweepy.Cursor(api.search,q=query, since='2020-12-12').items(count)
         for tweet in tweets:
-            tweet_texts.append(tweet.text)
+            tweet.text = re.sub("(@[A-Za-z0-9]+|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|[0-9])", '', tweet.text) #removes handles, urls, numbers, dates
+            tweet_texts.append([(tweet.text, vader.polarity_scores(tweet.text)["compound"])])
     except:
         pass
-    return tweet_texts
+    average_sentiment = 0
+    res = [lis[1] for lis in tweet_texts]
+    average_sentiment = average_sentiment / len(tweet_texts)
+    return tweet_texts, neutral_count, res
 
-def analyze_sentiments(tweets_list):
-    sentiment_list = []
-    for tweet in tweets_list:
-        sentiment_list.append(vader.polarity_scores(tweet)["compound"])
-    return sentiment_list
-
-def most_negative_tweet(sentiment_list, tweets_list):
+def most_negative_tweet(tweets_list):
     min_sentiment = min(sentiment_list)
     index = sentiment_list.index(min_sentiment)
     return tweets_list[index]
 
-def most_positive_tweet(sentiment_list, tweets_list):
+def most_positive_tweet(tweets_list):
     max_sentiment = max(sentiment_list)
     index = sentiment_list.index(max_sentiment)
     return tweets_list[index]
 
+def create_graph(sentiment_list):
+    return None
+
 def main():
     query = '$SQ'
-    count = 100
-    tweets = pull_tweets(query,count)
-    sentiments = analyze_sentiments(tweets)
-    print(most_negative_tweet(sentiments, tweets))
-    print(most_positive_tweet(sentiments, tweets))
-    print((sum(sentiments))/(len(sentiments)))
+    count = 1000
+    tweets, neutral_count, sentiment_average = pull_tweets(query,count)
+    print(sentiment_average, neutral_count)
 
 if __name__ == "__main__":
     main()
