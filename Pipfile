@@ -15,6 +15,7 @@ requests = "*"
 tweepy = "*"
 nltk = "*"
 scikit-learn = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.7"

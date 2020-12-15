@@ -5,6 +5,8 @@ import pandas as pd
 import os
 import re
 
+#create webhook to pull every hour, see how snetiment change matches up with stock price changes
+
 nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 vader = SentimentIntensityAnalyzer()
@@ -44,9 +46,11 @@ def pull_tweets(query, count):
 
 def remove_duplicates(tweets_list):
     tweets = []
+    tweet_texts = []
     for tweet in tweets_list:
-        if tweet[0] not in tweets:
+        if tweet[0] not in tweet_texts:
             tweets.append(tweet)
+            tweet_texts.append(tweet[0])
     return tweets
 
 def most_negative_tweet(tweets_list):
@@ -67,11 +71,12 @@ def create_graph(sentiment_list):
     pd.set_option('display.max_rows', None)
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', None)
+    pd.set_option('display.max_colwidth', None)
     print(sentiment_df)
     print("MEAN SENTIMENT: {0}".format(mean_sentiment))
 
 def main():
-    query = '$ACN'
+    query = '$SQ'
     count = 1000
     tweets = pull_tweets(query,count)
     create_graph(tweets)
