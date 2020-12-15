@@ -5,9 +5,6 @@ import pandas as pd
 import os
 import re
 
-
-#check if there is a relationship between sentiment and stock price, then develop formula using gradient descent?
-
 nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 vader = SentimentIntensityAnalyzer()
@@ -34,19 +31,23 @@ except:
 
 def pull_tweets(query, count):
     tweet_texts = []
-    sentiment_list = []
     neutral_count = 0
     try:
-        tweets = tweepy.Cursor(api.search,q=query, since='2020-12-12').items(count)
+        tweets = tweepy.Cursor(api.search,q=query).items(count)
         for tweet in tweets:
             tweet.text = re.sub("(@[A-Za-z0-9]+|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|[0-9])", '', tweet.text) #removes handles, urls, numbers, dates
-            tweet_texts.append([(tweet.text, vader.polarity_scores(tweet.text)["compound"])])
+            tweet_texts.append([tweet.text, tweet.created_at, vader.polarity_scores(tweet.text)["compound"]])
     except:
         pass
-    average_sentiment = 0
-    res = [lis[1] for lis in tweet_texts]
-    average_sentiment = average_sentiment / len(tweet_texts)
-    return tweet_texts, neutral_count, res
+    tweets = remove_duplicates(tweet_texts)
+    return tweets
+
+def remove_duplicates(tweets_list):
+    tweets = []
+    for tweet in tweets_list:
+        if tweet[0] not in tweets:
+            tweets.append(tweet)
+    return tweets
 
 def most_negative_tweet(tweets_list):
     min_sentiment = min(sentiment_list)
@@ -59,13 +60,22 @@ def most_positive_tweet(tweets_list):
     return tweets_list[index]
 
 def create_graph(sentiment_list):
-    return None
+    sentiment_df = pd.DataFrame(sentiment_list, columns = ["Text","Date", "Sentiment"])
+    sentiment_df.sort_values(by='Sentiment', ascending=True)
+    mean_sentiment = sentiment_df["Sentiment"].mean()
+
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', None)
+    print(sentiment_df)
+    print("MEAN SENTIMENT: {0}".format(mean_sentiment))
 
 def main():
-    query = '$SQ'
+    query = '$ACN'
     count = 1000
-    tweets, neutral_count, sentiment_average = pull_tweets(query,count)
-    print(sentiment_average, neutral_count)
+    tweets = pull_tweets(query,count)
+    create_graph(tweets)
+    #print(tweets)
 
 if __name__ == "__main__":
     main()
