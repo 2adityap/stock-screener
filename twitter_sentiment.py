@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import os
 import re
+from datetime import datetime
 
 #create webhook to pull every hour, see how snetiment change matches up with stock price changes
 
@@ -31,14 +32,16 @@ try:
 except:
     print("Error during authentication")
 
-def pull_tweets(query, count):
+def pull_tweets(query, count, start_date = None, end_date = None):
     tweet_texts = []
     neutral_count = 0
     try:
         tweets = tweepy.Cursor(api.search,q=query).items(count)
         for tweet in tweets:
             tweet.text = re.sub("(@[A-Za-z0-9]+|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|[0-9])", '', tweet.text) #removes handles, urls, numbers, dates
-            tweet_texts.append([tweet.text, tweet.created_at, vader.polarity_scores(tweet.text)["compound"]])
+            if end_date == None and start_date == None:
+                if tweet.created_at < end_date and tweet.created_at > start_date:
+                    tweet_texts.append([tweet.text, tweet.created_at, vader.polarity_scores(tweet.text)["compound"]])
     except:
         pass
     tweets = remove_duplicates(tweet_texts)
@@ -72,14 +75,18 @@ def create_graph(sentiment_list):
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', None)
     pd.set_option('display.max_colwidth', None)
+
     print(sentiment_df)
     print("MEAN SENTIMENT: {0}".format(mean_sentiment))
 
 def main():
     query = '$SQ'
     count = 1000
-    tweets = pull_tweets(query,count)
+    first = datetime(2020, 12, 16, 9, 30, 0, 0)
+    second = datetime(2020, 12, 16, 16,0,0,0)
+    tweets = pull_tweets(query,count, first, second)
     create_graph(tweets)
+
     #print(tweets)
 
 if __name__ == "__main__":
