@@ -22,7 +22,7 @@ def scrape(symbol):
     for text in percent_growth:
         scrape_data.append(text.text.strip())
 
-    analyst_rating = results.find_all('div', class_="Bdbw(2px) Bdbs(s) Bdbc($seperatorColor) H(1em) Pos(r) Mt(30px) Mx(10%)")
+    analyst_rating = results.find_all('span', class_="Bdbw(2px) Bdbs(s) Bdbc($seperatorColor) H(1em) Pos(r) Mt(30px) Mx(10%)")
     print(analyst_rating)
     return scrape_data
 
@@ -49,7 +49,6 @@ def eps_revisions_helper(data):
     eps_revisions = []
     eps_revisions_labels = ["Up Last 7 Days", "Up Last 30 Days", "Down Last 7 Days", "Down Last 30 Days"]
     eps_revisions_numbers = []
-    print(data)
     eps_revisions_numbers.append(data[80])
     eps_revisions_numbers.append(data[84])
     eps_revisions_numbers.append(data[88])
@@ -63,7 +62,7 @@ def main():
     symbol = input("What symbol do you want? ")
     data = scrape(symbol)
     eps, surprise = clean(data)
-    #print(eps, surprise)
+    print(eps, surprise)
 
 if __name__ == "__main__":
     main()

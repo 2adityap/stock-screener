@@ -17,6 +17,7 @@ nltk = "*"
 scikit-learn = "*"
 beautifulsoup4 = "*"
 datetime = "*"
+yfinance = "*"
 
 [requires]
 python_version = "3.7"

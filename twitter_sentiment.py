@@ -39,9 +39,8 @@ def pull_tweets(query, count, start_date = None, end_date = None):
         tweets = tweepy.Cursor(api.search,q=query).items(count)
         for tweet in tweets:
             tweet.text = re.sub("(@[A-Za-z0-9]+|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|[0-9])", '', tweet.text) #removes handles, urls, numbers, dates
-            if end_date == None and start_date == None:
-                if tweet.created_at < end_date and tweet.created_at > start_date:
-                    tweet_texts.append([tweet.text, tweet.created_at, vader.polarity_scores(tweet.text)["compound"]])
+            if tweet.created_at < end_date and tweet.created_at > start_date:
+                tweet_texts.append([tweet.text, tweet.created_at, vader.polarity_scores(tweet.text)["compound"]])
     except:
         pass
     tweets = remove_duplicates(tweet_texts)
@@ -80,10 +79,10 @@ def create_graph(sentiment_list):
     print("MEAN SENTIMENT: {0}".format(mean_sentiment))
 
 def main():
-    query = '$SQ'
-    count = 1000
-    first = datetime(2020, 12, 16, 9, 30, 0, 0)
-    second = datetime(2020, 12, 16, 16,0,0,0)
+    query = input("What symbol do you want: ")
+    count = 100
+    first = datetime(2020, 12, 17, 9, 0, 0)
+    second = datetime(2020, 12, 17, 16,30,0,0)
     tweets = pull_tweets(query,count, first, second)
     create_graph(tweets)
 

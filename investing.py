@@ -1,8 +1,10 @@
 import requests
 import os
+import yfinance as yf
+import pandas
+from scraping import scrape, clean, earnings_surprise_helper, eps_revisions_helper
 
 url = "https://www.alphavantage.co/query?"
-
 
 #Returns the high, low, 50 Day SMA and 200 Day SMA of a stock
 
@@ -30,17 +32,6 @@ def get_high_and_averages(key, symbol):
 
     return year_high, year_low, fifty_moving_avg, two_hundy_moving_avg
 
-#maybe get yahoo finance for this
-def current_price(key, symbol):
-    response = requests.get(url + "function=TIME_SERIES_DAILY&symbol=" + symbol + "&apikey=" + key)
-    res = response.json()
-
-    for key, value in res.items():
-        if key == "Time Series (Daily)":
-            for day in value.items():
-                for price in day:
-                    print(price)
-
 #Creates a list of lists of last 5 years of quarterly earnings. Each list has quarter data, revenue and profit, in that order
 
 def get_earnings(key, symbol):
@@ -59,6 +50,8 @@ def get_earnings(key, symbol):
                 earnings.append(quarter_report)
     return earnings
 
+#Return true if profit and earning went up
+
 def analyze_earnings(earnings):
     quarter_profit = []
     quarter_revenue = []
@@ -68,14 +61,7 @@ def analyze_earnings(earnings):
     print(quarter_profit)
     bool_revenue = analyze_earnings_helper(quarter_revenue)
     bool_profit = analyze_earnings_helper(quarter_profit)
-    if(bool_profit and bool_revenue):
-        return "Both earnings and revenue have increased over the last 4 quarters"
-    if(not(bool_revenue) and bool_profit):
-       return "Profits have gone up over the last 4 quarters, but the revenue hasn't"
-    if(not(bool_profit) and bool_revenue):
-        return "Revenue has gone up over the last 4 quarters, but profit hasn't"
-    else:
-        return "Neither earnings or revenue have increased over the last 4 quarters"
+    return bool_revenue and bool_profit
 
 def analyze_earnings_helper(quarter):
     if(quarter[0] > quarter[1] > quarter[2] > quarter[3]):
@@ -83,22 +69,36 @@ def analyze_earnings_helper(quarter):
     else:
         return False
 
+##### REVISIT BOOK TO LOOK AT ALL THE STRATEGIES
 
+def get_stock_price(symbol):
+    data = yf.download(symbol, period="1d", interval="15m")
+    print(data)
 
+#analyze if volume increases with price
+def get_volume_changes(symbol):
+    data = yf.download(symbol, period="1mo", interval="1d")
+    print(data["Volume"], data["Close"])
+
+#Earnings Calendar, analyze tweets a couple weeks before earnings
+def earnings_calendar(symbol):
+    ticker = yf.Ticker(symbol)
+    print(ticker.calendar.iloc[0])
+    return None
+
+def get_revisions_earnings_surprise(symbol):
+    data = scrape(symbol)
+    revisions, surprise = clean(data)
+    return revisions, surprise
 
 def main():
     key = os.environ.get("ALPHA_API_KEY")
-    print(key)
     symbol = input("What symbol do you want? ")
     year_high, year_low, fifty_moving_avg, two_hundy_moving_avg = get_high_and_averages(key, symbol)
-    print("52 Week High: {0}".format(year_high))
-    print("52 Week Low: {0}".format(year_low))
-    print("50 Day Moving Average: {0}".format(fifty_moving_avg))
-    print("200 Day Moving Average: {0}".format(two_hundy_moving_avg))
     earnings = get_earnings(key, symbol)
-    #print(earnings)
-    print(analyze_earnings(earnings))
-    #current_price(key,symbol)
+    earnings_calendar(symbol)
+    revisions, surprise = get_revisions_earnings_surprise(symbol)
+    print(revisions, surprise)
 
 if __name__ == "__main__":
     main()
