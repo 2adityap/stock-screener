@@ -60,16 +60,7 @@ def train_close_prices(dataframe):
     model.compile(optimizer='adam', loss='mse')
     history_data = model.fit(Xtrain, Ytrain, batch_size=50, epochs=200, verbose=2, validation_split=0.2)
 
-    #check if convergence is happening
-
-    #mtlplt.figure(figsize=(20,10))
-    #mtlplt.title('Training validation loss')
-    #mtlplt.plot(history_data.history['loss'])
-    #mtlplt.plot(history_data.history['val_loss'])
-    #mtlplt.ylabel('Training loss')
-    #mtlplt.xlabel('epochs')
-    #mtlplt.legend(['train' , 'validation'], loc = 'upper left')
-    #mtlplt.show()
+    #graph_convergence(history_data)
 
     testing_data = scaled_data[training_length-60:,:]
     Xtest = []
@@ -81,12 +72,26 @@ def train_close_prices(dataframe):
 
     predictions = model.predict(Xtest)
     predictions = scale.inverse_transform(predictions)
-    print(predictions)
 
     training = close_data[:training_length]
     validation = close_data[training_length:]
     validation['Predictions'] = predictions
 
+    #graph_algorithm_training(training, validation, dataframe)
+
+    predict_next_day(model, dataframe, scale)
+
+def graph_convergence(history_data):
+    mtlplt.figure(figsize=(20,10))
+    mtlplt.title('Training validation loss')
+    mtlplt.plot(history_data.history['loss'])
+    mtlplt.plot(history_data.history['val_loss'])
+    mtlplt.ylabel('Training loss')
+    mtlplt.xlabel('epochs')
+    mtlplt.legend(['train' , 'validation'], loc = 'upper left')
+    mtlplt.show()
+
+def graph_algorithm_training(training, validation, dataframe):
     ## Visualize trainning, validating and predicting values in graph
     mtlplt.figure(figsize=(20,10))
     mtlplt.title('Trained Model')
@@ -98,8 +103,21 @@ def train_close_prices(dataframe):
     mtlplt.legend(['Training', 'Validation', 'Predictions'], loc='lower right')
     mtlplt.show()
 
+def predict_next_day(model, dataframe, scale):
+    df = dataframe.filter(["Close"])
+    last60days = df[-60:].values
+    last60days_scaled = scale.transform(last60days)
+    X_test = []
+    X_test.append(last60days_scaled)
+    X_test = np.array(X_test)
+    X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
+
+    predicted_price = model.predict(X_test)
+    predicted_price = scale.inverse_transform(predicted_price)
+    print(predicted_price)
+
 def main():
-    df = create_df("SQ", "2016-01-01", "2020-12-20")
+    df = create_df("BA", "2010-01-01", "2020-12-29")
     train_close_prices(df)
 
 
