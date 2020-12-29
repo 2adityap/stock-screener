@@ -18,6 +18,10 @@ scikit-learn = "*"
 beautifulsoup4 = "*"
 datetime = "*"
 yfinance = "*"
+sklearn = "*"
+matplotlib = "*"
+keras = "*"
+pandas-datareader = "*"
 
 [requires]
 python_version = "3.7"
