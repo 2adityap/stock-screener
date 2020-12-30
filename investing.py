@@ -1,8 +1,10 @@
 import requests
 import os
 import yfinance as yf
-import pandas
+import pandas as pd
+import numpy as np
 from scraping import scrape, clean, earnings_surprise_helper, eps_revisions_helper
+from prediction import create_df, feature_scaling, train_close_prices, predict_next_day
 
 url = "https://www.alphavantage.co/query?"
 
@@ -69,8 +71,6 @@ def analyze_earnings_helper(quarter):
     else:
         return False
 
-##### REVISIT BOOK TO LOOK AT ALL THE STRATEGIES
-
 def get_stock_price(symbol):
     data = yf.download(symbol, period="1d", interval="15m")
     print(data)
@@ -78,12 +78,40 @@ def get_stock_price(symbol):
 #analyze if volume increases with price
 def get_volume_changes(symbol):
     data = yf.download(symbol, period="1mo", interval="1d")
-    print(data["Volume"], data["Close"])
+    volume = data.filter(["Volume"])
+    mean = int(volume.mean())
+
+    volume.to_csv('stockdata.csv',index = "Date")
+    volume_df = pd.read_csv('stockdata.csv')
+    length = int(volume_df.size / 2)
+    Higher = []
+    for i in range(length):
+        Higher.append(False)
+    volume_df["Higher"] = Higher
+
+    close = data.filter(["Close"])
+    close = np.array(close)
+    #close = close.astype(int)
+
+    percent_change = []
+    for i in range(length):
+        percent_change.append(((close[i]-close[i-1])/close[i-1]) * 100)
+
+    volume_df["Percent Change"] = percent_change
+
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', None)
+    pd.set_option('display.max_colwidth', None)
+
+    volume_df["Higher"] = np.where(volume_df["Volume"].values>mean,True,volume_df["Higher"])
+    print(volume_df)
+    return volume_df
 
 #Earnings Calendar, analyze tweets a couple weeks before earnings
 def earnings_calendar(symbol):
     ticker = yf.Ticker(symbol)
-    print(ticker.calendar.iloc[0])
+    print(ticker.calendar)
     return None
 
 def get_revisions_earnings_surprise(symbol):
@@ -94,10 +122,11 @@ def get_revisions_earnings_surprise(symbol):
 def main():
     key = os.environ.get("ALPHA_API_KEY")
     symbol = input("What symbol do you want? ")
-    year_high, year_low, fifty_moving_avg, two_hundy_moving_avg = get_high_and_averages(key, symbol)
-    earnings = get_earnings(key, symbol)
+    #year_high, year_low, fifty_moving_avg, two_hundy_moving_avg = get_high_and_averages(key, symbol)
+    #earnings = get_earnings(key, symbol)
     earnings_calendar(symbol)
     revisions, surprise = get_revisions_earnings_surprise(symbol)
+    get_volume_changes(symbol)
     print(revisions, surprise)
 
 if __name__ == "__main__":

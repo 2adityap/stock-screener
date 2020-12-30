@@ -32,15 +32,13 @@ try:
 except:
     print("Error during authentication")
 
-def pull_tweets(query, count, start_date = None, end_date = None):
+def pull_tweets(query, count):
     tweet_texts = []
-    neutral_count = 0
     try:
         tweets = tweepy.Cursor(api.search,q=query).items(count)
         for tweet in tweets:
             tweet.text = re.sub("(@[A-Za-z0-9]+|([^0-9A-Za-z \t])|(\w+:\/\/\S+)|[0-9])", '', tweet.text) #removes handles, urls, numbers, dates
-            if tweet.created_at < end_date and tweet.created_at > start_date:
-                tweet_texts.append([tweet.text, tweet.created_at, vader.polarity_scores(tweet.text)["compound"]])
+            tweet_texts.append([tweet.text, tweet.created_at, vader.polarity_scores(tweet.text)["compound"]])
     except:
         pass
     tweets = remove_duplicates(tweet_texts)
@@ -80,13 +78,10 @@ def create_graph(sentiment_list):
 
 def main():
     query = input("What symbol do you want: ")
-    count = 100
-    first = datetime(2020, 12, 17, 9, 0, 0)
-    second = datetime(2020, 12, 17, 16,30,0,0)
-    tweets = pull_tweets(query,count, first, second)
+    query = "${0}".format(query)
+    count = 500
+    tweets = pull_tweets(query,count)
     create_graph(tweets)
-
-    #print(tweets)
 
 if __name__ == "__main__":
     main()
