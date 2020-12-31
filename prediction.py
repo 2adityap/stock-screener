@@ -60,7 +60,7 @@ def train_close_prices(dataframe):
     model.compile(optimizer='adam', loss='mse')
     history_data = model.fit(Xtrain, Ytrain, batch_size=50, epochs=200, verbose=2, validation_split=0.2)
 
-    #graph_convergence(history_data)
+    graph_convergence(history_data)
 
     testing_data = scaled_data[training_length-60:,:]
     Xtest = []
@@ -77,8 +77,8 @@ def train_close_prices(dataframe):
     validation = close_data[training_length:]
     validation['Predictions'] = predictions
 
-    #graph_algorithm_training(training, validation, dataframe)
-
+    graph_algorithm_training(training, validation, dataframe)
+    print(dataframe)
     predict_next_day(model, dataframe, scale)
 
 def graph_convergence(history_data):
@@ -117,7 +117,7 @@ def predict_next_day(model, dataframe, scale):
     print(predicted_price)
 
 def main():
-    df = create_df("BA", "2010-01-01", "2020-12-29")
+    df = create_df("SQ", "2017-01-01", "2020-12-30")
     train_close_prices(df)
 
 

@@ -1,6 +1,6 @@
-AAPL "2009-01-01" to "2020-12-29" of training data, model predicts 129.79805 for 2020-12-30 close, Sentiment
-TSLA "2013-06-01" to "2020-12-29" of training data, model predicts 682.8277 for 2020-12-30 close, Sentiment
-MSFT "1995-01-01" to "2020-12-29" of training data, model predicts 220.70255 for 2020-12-30 close, Sentiment
-SQ "2017-01-01" to "2020-12-29" of training data, model predicts 217.24898 for 2020-12-30 close, Sentiment 0.0881747663551402
-AMZN "2010-01-01" to "2020-12-29" of training data, model predicts 3265.6365 for 2020-12-30 close, Sentiment
-BA "2010-01-01" to "2020-12-29" of training data, model predicts 213.98026 for 2020-12-30 close, Sentiment
+AAPL "2009-01-01" to "2020-12-29" of training data, model predicts 129.79805 for 2020-12-30 close, Actual Close 133.72, "2010-01-01" more effective, predicted 134.445
+TSLA "2013-06-01" to "2020-12-29" of training data, model predicts 682.8277 for 2020-12-30 close, Actual Close 694.78
+MSFT "1995-01-01" to "2020-12-29" of training data, model predicts 220.70255 for 2020-12-30 close, Actual Close 221.68
+SQ "2017-01-01" to "2020-12-29" of training data, model predicts 217.24898 for 2020-12-30 close, Actual Close 221.03
+AMZN "2010-01-01" to "2020-12-29" of training data, model predicts 3265.6365 for 2020-12-30 close, Actual Close 3285.85
+BA "2010-01-01" to "2020-12-29" of training data, model predicts 213.98026 for 2020-12-30 close, Actual Close 216.60
