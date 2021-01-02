@@ -53,7 +53,7 @@ def eps_revisions_helper(data):
     eps_revisions_numbers.append(data[84])
     eps_revisions_numbers.append(data[88])
     eps_revisions_numbers.append(data[92])
-    #print(eps_revisions_numbers)
+    print(eps_revisions_numbers)
     for i in range(len(eps_revisions_numbers)):
         eps_revisions.append((eps_revisions_numbers[i], eps_revisions_labels[i]))
     return eps_revisions

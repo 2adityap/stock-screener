@@ -74,14 +74,14 @@ def create_graph(sentiment_list):
     pd.set_option('display.max_colwidth', None)
 
     print(sentiment_df)
-    print("MEAN SENTIMENT: {0}".format(mean_sentiment))
+    return mean_sentiment
 
 def main():
     query = input("What symbol do you want: ")
     query = "${0}".format(query)
     count = 500
     tweets = pull_tweets(query,count)
-    create_graph(tweets)
+    print(create_graph(tweets))
 
 if __name__ == "__main__":
     main()
