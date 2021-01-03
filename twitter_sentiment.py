@@ -73,8 +73,8 @@ def create_graph(sentiment_list):
     pd.set_option('display.width', None)
     pd.set_option('display.max_colwidth', None)
 
-    print(sentiment_df)
-    return mean_sentiment
+    size = int(sentiment_df.size / 3)
+    return mean_sentiment, size
 
 def main():
     query = input("What symbol do you want: ")
