@@ -117,7 +117,8 @@ def predict_next_day(model, dataframe, scale):
     print(predicted_price)
 
 def main():
-    df = create_df("SQ", "2017-01-01", "2020-12-30")
+    #Something to do with start price that affects wrong output
+    df = create_df("NVDA", "2013-01-01", "2021-01-04")
     train_close_prices(df)
 
 

@@ -231,7 +231,7 @@ def present_information(symbol):
 
     #Add analyst revisions here
     days = earnings_calendar(symbol)
-    output = output + "There are {0} days until the next earnings are given".format(earnings_calendar)
+    output = output + "There are {0} days until the next earnings are given. ".format(days)
 
     sentiment, size = twitter(symbol)
     if sentiment > 0.0:
