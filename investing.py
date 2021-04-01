@@ -230,8 +230,8 @@ def present_information(symbol):
         output = output + "Over the last 4 weeks there have been {0} volume shifts that have been higher than the moving average. Of those shifts, {1} resulted in a positive price change and {2} resulted in a negative price change. This means that most likely a lot of stock has been sold recently, resulting in strong volume increase but a price decrease. This is a cause of worry and needs to be investigated more. ".format(count_up + count_down, count_up, count_down)
 
     #Add analyst revisions here
-    days = earnings_calendar(symbol)
-    output = output + "There are {0} days until the next earnings are given. ".format(days)
+    #days = earnings_calendar(symbol)
+    #output = output + "There are {0} days until the next earnings are given. ".format(days)
 
     sentiment, size = twitter(symbol)
     if sentiment > 0.0:
@@ -247,8 +247,8 @@ def main():
     symbol = input("What symbol do you want? ")
     present_information(symbol)
 
-    #df = create_df(symbol, "2017-01-01", "2020-12-30")
-    #train_close_prices(df)
+    df = create_df(symbol, "2017-01-01", "2020-12-30")
+    train_close_prices(df)
 
 if __name__ == "__main__":
     main()
